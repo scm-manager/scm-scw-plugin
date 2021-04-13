@@ -22,7 +22,39 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import EmbeddedVideo from "./EmbeddedVideo";
+import React, { FC } from "react";
+import { Repository } from "@scm-manager/ui-types";
+import { Subtitle } from "@scm-manager/ui-components";
+import styled from "styled-components";
 
-binder.bind("reviewPlugin.pullrequest.bottom", EmbeddedVideo);
+type Props = {
+  repository: Repository;
+  pullRequest: any;
+};
+
+const VideoContainer = styled.div`
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+`;
+
+const EmbeddedVideo: FC<Props> = ({ repository, pullRequest }) => {
+  const scwResult = pullRequest?._embedded?.scw;
+
+  // if (!scwResult) {
+  //   return null;
+  // }
+
+  return (
+    <VideoContainer>
+      <figure>
+        <Subtitle>Tesla</Subtitle>
+        <span>American electric car manufacturer</span>
+        <video src="https://bulma.io/images/videos/tesla.mp4" controls={true} />
+      </figure>
+    </VideoContainer>
+  );
+};
+
+export default EmbeddedVideo;

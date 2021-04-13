@@ -21,8 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.scw;
 
-import { binder } from "@scm-manager/ui-extensions";
-import EmbeddedVideo from "./EmbeddedVideo";
+import sonia.scm.repository.Repository;
+import sonia.scm.store.DataStore;
+import sonia.scm.store.DataStoreFactory;
 
-binder.bind("reviewPlugin.pullrequest.bottom", EmbeddedVideo);
+import javax.inject.Inject;
+
+public class ScwResultStore {
+
+  private static final String STORE_NAME = "secure-code-warrior";
+
+  private final DataStoreFactory dataStoreFactory;
+
+  @Inject
+  public ScwResultStore(DataStoreFactory dataStoreFactory) {
+    this.dataStoreFactory = dataStoreFactory;
+  }
+
+  public ScwResult get(Repository repository, String id) {
+    return createStore(repository).getOptional(id).orElse(new ScwResult());
+  }
+
+  public void put(Repository repository, String id, ScwResult result) {
+    createStore(repository).put(id, result);
+  }
+
+  private DataStore<ScwResult> createStore(Repository repository) {
+    return dataStoreFactory.withType(ScwResult.class).withName(STORE_NAME).forRepository(repository).build();
+  }
+}

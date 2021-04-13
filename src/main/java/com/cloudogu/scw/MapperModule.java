@@ -22,7 +22,17 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import EmbeddedVideo from "./EmbeddedVideo";
+package com.cloudogu.scw;
 
-binder.bind("reviewPlugin.pullrequest.bottom", EmbeddedVideo);
+import com.google.inject.AbstractModule;
+import org.mapstruct.factory.Mappers;
+import sonia.scm.plugin.Extension;
+
+@Extension
+public class MapperModule extends AbstractModule {
+
+  @Override
+  protected void configure() {
+    bind(ScwResultMapper.class).to(Mappers.getMapper(ScwResultMapper.class).getClass());
+  }
+}

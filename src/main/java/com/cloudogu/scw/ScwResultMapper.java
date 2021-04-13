@@ -22,7 +22,17 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import EmbeddedVideo from "./EmbeddedVideo";
+package com.cloudogu.scw;
 
-binder.bind("reviewPlugin.pullrequest.bottom", EmbeddedVideo);
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper
+public abstract class ScwResultMapper {
+
+  @Mapping(target = "attributes", ignore = true)
+  abstract ScwResultDto map(ScwResult result);
+
+  abstract ScwResult map(ScwResultDto dto);
+
+}

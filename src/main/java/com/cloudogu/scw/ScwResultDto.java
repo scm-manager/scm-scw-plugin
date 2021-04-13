@@ -21,8 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.scw;
 
-import { binder } from "@scm-manager/ui-extensions";
-import EmbeddedVideo from "./EmbeddedVideo";
+import de.otto.edison.hal.HalRepresentation;
+import de.otto.edison.hal.Links;
+import lombok.Getter;
+import lombok.Setter;
 
-binder.bind("reviewPlugin.pullrequest.bottom", EmbeddedVideo);
+import java.util.List;
+
+@Getter
+@Setter
+public class ScwResultDto extends HalRepresentation {
+
+  private String url;
+  private String name;
+  private String description;
+  private List<String> videos;
+
+  ScwResultDto() {}
+
+  public ScwResultDto(Links links) {
+    super(links);
+  }
+}

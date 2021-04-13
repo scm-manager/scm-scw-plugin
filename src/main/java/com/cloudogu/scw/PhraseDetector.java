@@ -24,18 +24,46 @@
 
 package com.cloudogu.scw;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Path("v2/sample")
-class SampleResource {
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
-  @GET
-  @Produces(MediaType.TEXT_PLAIN)
-  public String sample() {
-    return "Sample";
+public class PhraseDetector {
+
+  private static final Logger LOG = LoggerFactory.getLogger(PhraseDetector.class);
+
+  private Map<String, String> phrases;
+
+  public PhraseDetector() {
+    try {
+      InputStream is = getClass().getClassLoader().getResourceAsStream("com/cloudogu/scw/phraseList.json");
+      phrases = new ObjectMapper().readValue(is, Map.class);
+    } catch (IOException e) {
+      LOG.error("Could not find phrases", e);
+    }
   }
 
+  PhraseDetector(Map<String, String> phrases) {
+    this.phrases = phrases;
+  }
+
+  public Set<String> detect(String text) {
+    Set<String> matchingPhrases = new HashSet<>();
+
+    for (Map.Entry<String, String> phrase : phrases.entrySet()) {
+      Pattern pattern = Pattern.compile("(?i).*" + phrase.getKey() + ".*");
+      if (pattern.matcher(text).find()) {
+        matchingPhrases.add(phrase.getValue());
+      }
+    }
+
+    return matchingPhrases;
+  }
 }
