@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import React, {FC} from "react";
+import React, { FC } from "react";
 import styled from "styled-components";
 import ScwCard from "./ScwCard";
 
