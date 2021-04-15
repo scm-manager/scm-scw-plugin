@@ -23,6 +23,6 @@
  */
 
 import { binder } from "@scm-manager/ui-extensions";
-import EmbeddedVideo from "./EmbeddedVideo";
+import ScwCards from "./ScwCards";
 
-binder.bind("reviewPlugin.pullrequest.bottom", EmbeddedVideo);
+binder.bind("reviewPlugin.pullrequest.bottom", ScwCards);

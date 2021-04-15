@@ -25,7 +25,6 @@
 package com.cloudogu.scw;
 
 import com.cloudogu.scm.review.pullrequest.service.PullRequest;
-import de.otto.edison.hal.HalRepresentation;
 import sonia.scm.api.v2.resources.Enrich;
 import sonia.scm.api.v2.resources.HalAppender;
 import sonia.scm.api.v2.resources.HalEnricher;

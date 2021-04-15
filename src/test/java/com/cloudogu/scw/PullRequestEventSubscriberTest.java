@@ -31,17 +31,18 @@ import com.cloudogu.scm.review.comment.service.Location;
 import com.cloudogu.scm.review.comment.service.Reply;
 import com.cloudogu.scm.review.pullrequest.service.PullRequest;
 import com.cloudogu.scm.review.pullrequest.service.PullRequestEvent;
-import com.cloudogu.scm.review.pullrequest.service.PullRequestUpdatedEvent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sonia.scm.HandlerEventType;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryTestData;
+import sonia.scm.web.security.AdministrationContext;
+import sonia.scm.web.security.PrivilegedAction;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -60,8 +61,23 @@ class PullRequestEventSubscriberTest {
   @Mock
   private ScwResultService service;
 
-  @InjectMocks
   private PullRequestEventSubscriber eventSubscriber;
+
+  @BeforeEach
+  void initSubscriber() {
+    AdministrationContext administrationContext = new AdministrationContext() {
+      @Override
+      public void runAsAdmin(PrivilegedAction action) {
+        action.run();
+      }
+
+      @Override
+      public void runAsAdmin(Class<? extends PrivilegedAction> actionClass) {
+        // Nothing
+      }
+    };
+    eventSubscriber = new PullRequestEventSubscriber(service, commentService, administrationContext);
+  }
 
   @Test
   void shouldHandlePullRequestUpdates() {

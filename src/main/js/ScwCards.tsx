@@ -22,39 +22,39 @@
  * SOFTWARE.
  */
 
-import React, { FC } from "react";
-import { Repository } from "@scm-manager/ui-types";
-import { Subtitle } from "@scm-manager/ui-components";
+import React, {FC} from "react";
 import styled from "styled-components";
+import ScwCard from "./ScwCard";
+
+export type ScwResult = {
+  url: string;
+  name: string;
+  description: string;
+  videos?: string[];
+};
 
 type Props = {
-  repository: Repository;
   pullRequest: any;
 };
 
-const VideoContainer = styled.div`
-  border: 1px solid #dbdbdb;
-  border-radius: 4px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-`;
+const Wrapper = styled.div``;
 
-const EmbeddedVideo: FC<Props> = ({ repository, pullRequest }) => {
-  const scwResult = pullRequest?._embedded?.scw;
+const ScwCards: FC<Props> = ({ pullRequest }) => {
+  const scwResults: ScwResult[] = pullRequest?._embedded?.scwResults?.results;
 
-  // if (!scwResult) {
-  //   return null;
-  // }
+  if (!scwResults) {
+    return null;
+  }
 
   return (
-    <VideoContainer>
-      <figure>
-        <Subtitle>Tesla</Subtitle>
-        <span>American electric car manufacturer</span>
-        <video src="https://bulma.io/images/videos/tesla.mp4" controls={true} />
-      </figure>
-    </VideoContainer>
+    <>
+      <Wrapper className="columns card-columns is-multiline">
+        {scwResults?.map((r: ScwResult) => (
+          <ScwCard result={r} className={scwResults.length <= 1 ? " is-full" : " is-half"} />
+        ))}
+      </Wrapper>
+    </>
   );
 };
 
-export default EmbeddedVideo;
+export default ScwCards;

@@ -65,8 +65,7 @@ public class ScwAPI {
         .request();
       return response.contentFromJson(ScwResultDto.class);
     } catch (IOException e) {
-      // Do something
-      throw new WebApplicationException();
+      throw new WebApplicationException(e);
     }
   }
 }
