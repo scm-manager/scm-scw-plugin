@@ -56,9 +56,11 @@ public class ScwResultService {
     Set<String> matchingKeywords = findMatchesInPullRequest(pullRequest);
 
     List<ScwResultDto> results = scwAPI.fetchForKeywords(matchingKeywords);
+    ScwResults scwResults = new ScwResults();
     for (ScwResultDto result : results) {
-      store.put(repository, pullRequest.getId(), mapper.map(result));
+      scwResults.add(mapper.map(result));
     }
+    store.put(repository, pullRequest.getId(), scwResults);
   }
 
   private Set<String> findMatchesInPullRequest(PullRequest pullRequest) {

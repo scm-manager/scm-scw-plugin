@@ -46,20 +46,21 @@ class ScwResultStoreTest {
 
   @Test
   void shouldGetNotNullResultIfEmptyStore() {
-    ScwResult scwResult = store.get(REPOSITORY, "1");
+    ScwResults scwResults = store.get(REPOSITORY, "1");
 
-    assertThat(scwResult).isNotNull();
+    assertThat(scwResults).isNotNull();
+    assertThat(scwResults.getResults()).hasSize(0);
   }
 
   @Test
   void shouldStoreResult() {
-    ScwResult result = new ScwResult("link", "title", "desc", ImmutableList.of("video"));
-    store.put(REPOSITORY, "1", result);
+    ScwResult result = new ScwResult("link", "title", "desc", ImmutableList.of("video", "video2"));
+    store.put(REPOSITORY, "1", new ScwResults(ImmutableList.of(result)));
 
-    ScwResult storedResult = store.get(REPOSITORY, "1");
+    ScwResult storedResult = store.get(REPOSITORY, "1").getResults().get(0);
     assertThat(storedResult.getUrl()).isEqualTo("link");
     assertThat(storedResult.getName()).isEqualTo("title");
     assertThat(storedResult.getDescription()).isEqualTo("desc");
-    assertThat(storedResult.getVideos().get(0)).isEqualTo("video");
+    assertThat(storedResult.getVideos()).contains("video", "video2");
   }
 }

@@ -21,34 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.cloudogu.scw;
 
-import sonia.scm.repository.Repository;
-import sonia.scm.store.DataStore;
-import sonia.scm.store.DataStoreFactory;
+import de.otto.edison.hal.HalRepresentation;
+import de.otto.edison.hal.Links;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.inject.Inject;
+import java.util.List;
 
-public class ScwResultStore {
+@Getter
+@Setter
+public class ScwResultsDto extends HalRepresentation {
 
-  private static final String STORE_NAME = "secure-code-warrior";
+  private List<ScwResultDto> results;
 
-  private final DataStoreFactory dataStoreFactory;
+  ScwResultsDto() {}
 
-  @Inject
-  public ScwResultStore(DataStoreFactory dataStoreFactory) {
-    this.dataStoreFactory = dataStoreFactory;
-  }
-
-  public ScwResults get(Repository repository, String id) {
-    return createStore(repository).getOptional(id).orElse(new ScwResults());
-  }
-
-  public void put(Repository repository, String id, ScwResults results) {
-    createStore(repository).put(id, results);
-  }
-
-  private DataStore<ScwResults> createStore(Repository repository) {
-    return dataStoreFactory.withType(ScwResults.class).withName(STORE_NAME).forRepository(repository).build();
+  public ScwResultsDto(Links links) {
+    super(links);
   }
 }

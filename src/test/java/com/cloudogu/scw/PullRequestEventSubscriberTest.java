@@ -30,6 +30,7 @@ import com.cloudogu.scm.review.comment.service.CommentService;
 import com.cloudogu.scm.review.comment.service.Location;
 import com.cloudogu.scm.review.comment.service.Reply;
 import com.cloudogu.scm.review.pullrequest.service.PullRequest;
+import com.cloudogu.scm.review.pullrequest.service.PullRequestEvent;
 import com.cloudogu.scm.review.pullrequest.service.PullRequestUpdatedEvent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -44,7 +45,7 @@ import sonia.scm.repository.RepositoryTestData;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -65,7 +66,7 @@ class PullRequestEventSubscriberTest {
   @Test
   void shouldHandlePullRequestUpdates() {
     PullRequest pr = new PullRequest();
-    eventSubscriber.handleEvent(new PullRequestUpdatedEvent(REPOSITORY, pr));
+    eventSubscriber.handleEvent(new PullRequestEvent(REPOSITORY, pr, pr, HandlerEventType.CREATE));
 
     verify(service).checkPullRequestForResults(REPOSITORY, pr);
   }
@@ -75,6 +76,8 @@ class PullRequestEventSubscriberTest {
     PullRequest pr = new PullRequest();
     Comment comment = new Comment();
     eventSubscriber.handleEvent(new CommentEvent(REPOSITORY, pr, comment, comment, HandlerEventType.DELETE));
+
+    verify(commentService, never()).reply(any(), any(), any(), any(), any());
   }
 
   @Test
@@ -98,10 +101,13 @@ class PullRequestEventSubscriberTest {
 
     PullRequest pr = new PullRequest("1", "source", "target");
     Comment comment = Comment.createComment("a1", text, "trillian", new Location("readme.md"));
+    Reply reply = new Reply();
+    reply.setComment("url");
+    comment.addReply(reply);
+
+    // Should not add reply if reply with url already exists
     eventSubscriber.handleEvent(new CommentEvent(REPOSITORY, pr, comment, comment, HandlerEventType.CREATE));
 
-    eventSubscriber.handleEvent(new CommentEvent(REPOSITORY, pr, comment, comment, HandlerEventType.CREATE));
-
-    verify(commentService, times(1)).reply(eq(REPOSITORY.getNamespace()), eq(REPOSITORY.getName()), eq(pr.getId()), eq(comment.getId()), any(Reply.class));
+    verify(commentService, never()).reply(eq(REPOSITORY.getNamespace()), eq(REPOSITORY.getName()), eq(pr.getId()), eq(comment.getId()), any(Reply.class));
   }
 }

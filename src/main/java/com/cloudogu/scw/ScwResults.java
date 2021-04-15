@@ -21,34 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 package com.cloudogu.scw;
 
-import sonia.scm.repository.Repository;
-import sonia.scm.store.DataStore;
-import sonia.scm.store.DataStoreFactory;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.inject.Inject;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ScwResultStore {
+@XmlRootElement(name = "results")
+@XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ScwResults {
+  private List<ScwResult> results = new ArrayList<>();
 
-  private static final String STORE_NAME = "secure-code-warrior";
-
-  private final DataStoreFactory dataStoreFactory;
-
-  @Inject
-  public ScwResultStore(DataStoreFactory dataStoreFactory) {
-    this.dataStoreFactory = dataStoreFactory;
-  }
-
-  public ScwResults get(Repository repository, String id) {
-    return createStore(repository).getOptional(id).orElse(new ScwResults());
-  }
-
-  public void put(Repository repository, String id, ScwResults results) {
-    createStore(repository).put(id, results);
-  }
-
-  private DataStore<ScwResults> createStore(Repository repository) {
-    return dataStoreFactory.withType(ScwResults.class).withName(STORE_NAME).forRepository(repository).build();
+  void add(ScwResult result) {
+    results.add(result);
   }
 }

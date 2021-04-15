@@ -24,16 +24,14 @@
 
 package com.cloudogu.scw;
 
-import com.cloudogu.scm.review.comment.service.Comment;
 import com.cloudogu.scm.review.comment.service.CommentEvent;
 import com.cloudogu.scm.review.comment.service.CommentService;
 import com.cloudogu.scm.review.comment.service.Reply;
-import com.cloudogu.scm.review.pullrequest.service.PullRequestUpdatedEvent;
+import com.cloudogu.scm.review.pullrequest.service.PullRequestEvent;
 import com.github.legman.Subscribe;
 import sonia.scm.EagerSingleton;
 import sonia.scm.HandlerEventType;
 import sonia.scm.plugin.Extension;
-import sonia.scm.repository.Repository;
 
 import javax.inject.Inject;
 import java.util.Set;
@@ -52,13 +50,15 @@ public class PullRequestEventSubscriber {
   }
 
   @Subscribe
-  public void handleEvent(PullRequestUpdatedEvent event) {
-    service.checkPullRequestForResults(event.getRepository(), event.getPullRequest());
+  public void handleEvent(PullRequestEvent event) {
+    if (shouldHandleEvent(event.getEventType())) {
+      service.checkPullRequestForResults(event.getRepository(), event.getPullRequest());
+    }
   }
 
   @Subscribe
   public void handleEvent(CommentEvent event) {
-    if (shouldHandleCommentEvent(event)) {
+    if (shouldHandleEvent(event.getEventType())) {
       Set<ScwResult> results = service.checkTextForResults(event.getItem().getComment());
       for (ScwResult result : results) {
         if (shouldCreateReplyForResult(event, result)) {
@@ -69,9 +69,7 @@ public class PullRequestEventSubscriber {
   }
 
   private boolean shouldCreateReplyForResult(CommentEvent event, ScwResult result) {
-    Repository repo = event.getRepository();
-    Comment comment = commentService.get(repo.getNamespace(), repo.getName(), event.getPullRequest().getId(), event.getItem().getId());
-    for (Reply reply : comment.getReplies()) {
+    for (Reply reply : event.getItem().getReplies()) {
       if (reply.getComment().contains(result.getUrl())) {
         return false;
       }
@@ -91,8 +89,8 @@ public class PullRequestEventSubscriber {
     );
   }
 
-  private boolean shouldHandleCommentEvent(CommentEvent event) {
-    return event.getEventType() == HandlerEventType.CREATE || event.getEventType() == HandlerEventType.MODIFY;
+  private boolean shouldHandleEvent(HandlerEventType eventType) {
+    return eventType == HandlerEventType.CREATE || eventType == HandlerEventType.MODIFY;
   }
 
   private String createReplyText(ScwResult result) {

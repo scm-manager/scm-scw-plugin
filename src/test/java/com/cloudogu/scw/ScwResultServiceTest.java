@@ -41,6 +41,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,7 +76,10 @@ class ScwResultServiceTest {
     PullRequest pullRequest = createPullRequest(title, "");
     service.checkPullRequestForResults(REPOSITORY, pullRequest);
 
-    verify(store, times(1)).put(REPOSITORY, "1", result);
+    verify(store, times(1)).put(eq(REPOSITORY), eq("1"), argThat(results -> {
+      assertThat(results.getResults().get(0)).isEqualTo(result);
+      return true;
+    }));
   }
 
   @Test
@@ -85,7 +90,10 @@ class ScwResultServiceTest {
     PullRequest pullRequest = createPullRequest("", description);
     service.checkPullRequestForResults(REPOSITORY, pullRequest);
 
-    verify(store, times(1)).put(REPOSITORY, "1", result);
+    verify(store, times(1)).put(eq(REPOSITORY), eq("1"), argThat(results -> {
+      assertThat(results.getResults().get(0)).isEqualTo(result);
+      return true;
+    }));
   }
 
   @Test

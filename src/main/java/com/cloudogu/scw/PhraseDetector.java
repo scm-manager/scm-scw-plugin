@@ -25,6 +25,7 @@
 package com.cloudogu.scw;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,11 +57,12 @@ public class PhraseDetector {
 
   public Set<String> detect(String text) {
     Set<String> matchingPhrases = new HashSet<>();
-
-    for (Map.Entry<String, String> phrase : phrases.entrySet()) {
-      Pattern pattern = Pattern.compile("(?i).*" + phrase.getKey() + ".*");
-      if (pattern.matcher(text).find()) {
-        matchingPhrases.add(phrase.getValue());
+    if (!Strings.isNullOrEmpty(text)) {
+      for (Map.Entry<String, String> phrase : phrases.entrySet()) {
+        Pattern pattern = Pattern.compile("(?i)" + phrase.getKey());
+        if (pattern.matcher(text).find()) {
+          matchingPhrases.add(phrase.getValue());
+        }
       }
     }
 
