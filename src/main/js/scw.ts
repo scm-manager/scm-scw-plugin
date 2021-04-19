@@ -22,31 +22,9 @@
  * SOFTWARE.
  */
 
-import React, { FC } from "react";
-import { HalRepresentation } from "@scm-manager/ui-types";
-import ScwCard from "./ScwCard";
-import { ScwResult } from "./scw";
-
-type Props = { pullRequest: HalRepresentation };
-
-type ScwResults = {
-  results: ScwResult[];
+export type ScwResult = {
+  url: string;
+  name: string;
+  description: string;
+  videos?: string[];
 };
-
-const ScwCards: FC<Props> = ({ pullRequest }) => {
-  const scwResults = (pullRequest._embedded?.scwResults as ScwResults)?.results;
-
-  if (!scwResults) {
-    return null;
-  }
-
-  return (
-    <div className="columns card-columns is-multiline">
-      {scwResults.map((r: ScwResult) => (
-        <ScwCard result={r} className={scwResults.length <= 1 ? " is-full" : " is-half"} />
-      ))}
-    </div>
-  );
-};
-
-export default ScwCards;

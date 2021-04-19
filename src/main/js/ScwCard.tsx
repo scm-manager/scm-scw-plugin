@@ -22,10 +22,11 @@
  * SOFTWARE.
  */
 
-import { ScwResult } from "./ScwCards";
 import React, { FC } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
+import classNames from "classnames";
+import { ScwResult } from "./scw";
 
 const SizedIcon = styled.figure`
   width: 96px;
@@ -50,8 +51,8 @@ const ScwCard: FC<Props> = ({ result, className }) => {
   const [t] = useTranslation("plugins");
 
   return (
-    <Card className={"column" + className}>
-      <div className={"card"}>
+    <Card className={classNames("column", className)}>
+      <div className="card">
         <div className="media-left">
           <SizedIcon className="image">
             <img
@@ -62,20 +63,20 @@ const ScwCard: FC<Props> = ({ result, className }) => {
         </div>
         <div className="card-image">
           <figure className="image">
-            <div>{result?.videos && <video src={result?.videos[0]} controls={true} />}</div>
+            <div>{result.videos ? <video src={result.videos[0]} controls={true} /> : null}</div>
           </figure>
         </div>
         <div className="card-content">
           <div className="media">
             <div className="media-content">
               <p>
-                <strong>{result?.name}</strong>
+                <strong>{result.name}</strong>
               </p>
             </div>
           </div>
           <Content className="content">
-            <p>{result?.description}</p>
-            {result?.videos && result?.videos?.length > 1 && (
+            <p>{result.description}</p>
+            {result.videos && result.videos?.length > 1 ? (
               <>
                 <p>{t("scm-scw-plugin.pullRequest.addtionalVideos")}</p>
                 {result.videos.map((videoLink, index) => (
@@ -84,7 +85,7 @@ const ScwCard: FC<Props> = ({ result, className }) => {
                   </a>
                 ))}
               </>
-            )}
+            ) : null}
           </Content>
         </div>
         <footer className="card-footer">
