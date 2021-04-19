@@ -28,6 +28,7 @@ plugins {
 }
 
 dependencies {
+  plugin "sonia.scm.plugins:scm-review-plugin:2.8.1-SNAPSHOT"
 }
 
 scmPlugin {

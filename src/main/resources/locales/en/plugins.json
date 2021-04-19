@@ -1,5 +1,8 @@
 {
   "scm-scw-plugin": {
-
+    "pullRequest": {
+      "cardLink": "Try this challenge in Secure Code Warrior",
+      "additionalVideos": "Also check out this additional videos:"
+    }
   }
 }

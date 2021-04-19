@@ -24,18 +24,22 @@
 
 package com.cloudogu.scw;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import de.otto.edison.hal.HalRepresentation;
+import de.otto.edison.hal.Links;
+import lombok.Getter;
+import lombok.Setter;
 
-@Path("v2/sample")
-class SampleResource {
+import java.util.List;
 
-  @GET
-  @Produces(MediaType.TEXT_PLAIN)
-  public String sample() {
-    return "Sample";
+@Getter
+@Setter
+public class ScwResultsDto extends HalRepresentation {
+
+  private List<ScwResultDto> results;
+
+  ScwResultsDto() {}
+
+  public ScwResultsDto(Links links) {
+    super(links);
   }
-
 }

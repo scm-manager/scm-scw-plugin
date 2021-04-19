@@ -22,8 +22,29 @@
  * SOFTWARE.
  */
 
-describe("frontend unit tests", () => {
-  it("some test", () => {
-    expect(21 * 2).toBe(42);
-  });
-});
+package com.cloudogu.scw;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.List;
+
+@XmlRootElement(name = "results")
+@XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ScwResults {
+  private List<ScwResult> results = new ArrayList<>();
+
+  void add(ScwResult result) {
+    results.add(result);
+  }
+}

@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import ScwCards from "./ScwCards";
-
-binder.bind("reviewPlugin.pullrequest.bottom", ScwCards);
+export type ScwResult = {
+  url: string;
+  name: string;
+  description: string;
+  videos?: string[];
+};

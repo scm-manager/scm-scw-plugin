@@ -21,8 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.scw;
 
-import { binder } from "@scm-manager/ui-extensions";
-import ScwCards from "./ScwCards";
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-binder.bind("reviewPlugin.pullrequest.bottom", ScwCards);
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+
+@XmlRootElement(name = "result")
+@XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ScwResult {
+
+  private String url;
+  private String name;
+  private String description;
+  private List<String> videos;
+
+}

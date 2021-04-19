@@ -1,0 +1,140 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020-present Cloudogu GmbH and Contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package com.cloudogu.scw;
+
+import com.cloudogu.scm.review.comment.service.CommentEvent;
+import com.cloudogu.scm.review.comment.service.CommentService;
+import com.cloudogu.scm.review.comment.service.Reply;
+import com.cloudogu.scm.review.pullrequest.service.PullRequestEvent;
+import com.github.legman.Subscribe;
+import sonia.scm.EagerSingleton;
+import sonia.scm.HandlerEventType;
+import sonia.scm.plugin.Extension;
+import sonia.scm.web.security.AdministrationContext;
+
+import javax.inject.Inject;
+import java.util.Set;
+
+@Extension
+@EagerSingleton
+public class PullRequestEventSubscriber {
+
+  private final ScwResultService service;
+  private final CommentService commentService;
+  private final AdministrationContext administrationContext;
+
+  @Inject
+  public PullRequestEventSubscriber(ScwResultService service, CommentService commentService, AdministrationContext administrationContext) {
+    this.service = service;
+    this.commentService = commentService;
+    this.administrationContext = administrationContext;
+  }
+
+  @Subscribe
+  public void handleEvent(PullRequestEvent event) {
+    if (shouldHandleEvent(event.getEventType())) {
+      service.checkPullRequestForResults(event.getRepository(), event.getPullRequest());
+    }
+  }
+
+  @Subscribe
+  public void handleEvent(CommentEvent event) {
+    if (shouldHandleEvent(event.getEventType())) {
+      Set<ScwResult> results = service.checkTextForResults(event.getItem().getComment());
+      if (!results.isEmpty()) {
+        administrationContext.runAsAdmin(() -> {
+          for (ScwResult result : results) {
+            if (shouldCreateReplyForResult(event, result)) {
+              createReply(event, result);
+            }
+          }
+        });
+      }
+    }
+  }
+
+  private boolean shouldCreateReplyForResult(CommentEvent event, ScwResult result) {
+    for (Reply reply : event.getItem().getReplies()) {
+      if (reply.getComment().contains(result.getUrl())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private void createReply(CommentEvent event, ScwResult result) {
+    Reply reply = new Reply();
+    reply.setComment(createReplyText(result));
+    reply.setSystemReply(true);
+    commentService.reply(
+      event.getRepository().getNamespace(),
+      event.getRepository().getName(),
+      event.getPullRequest().getId(),
+      event.getItem().getId(),
+      reply
+    );
+  }
+
+  private boolean shouldHandleEvent(HandlerEventType eventType) {
+    return eventType == HandlerEventType.CREATE || eventType == HandlerEventType.MODIFY;
+  }
+
+  private String createReplyText(ScwResult result) {
+
+    StringBuilder text = new StringBuilder();
+
+    // Add header
+    text.append("*Information from Secure Code Warrior based on mentioned security issue:*\n\n");
+
+    // Add title
+    text.append("**").append(result.getName()).append("**").append("\n\n");
+
+    // Add description
+    text.append(result.getDescription()).append("\n\n");
+
+    // Add videos
+    if (result.getVideos().size() > 0) {
+      // Add embedded video player
+      text.append("<iframe width=\"300\" height=\"169\"\n")
+        .append("src=").append(result.getVideos().get(0).replace(" ", "+")).append(" \n")
+        .append("frameborder=\"0\" \n")
+        .append("allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture\" \n")
+        .append("allowfullscreen=true></iframe> \n\n");
+      // Add additional videos as links
+      if (result.getVideos().size() > 1) {
+        text.append("Check out this additional videos:\n\n");
+        for (int i = 1; i < result.getVideos().size(); i++) {
+          text.append("[Video").append(i).append("](").append(result.getVideos().get(i)).append(")");
+        }
+      }
+    }
+
+    // Add training links
+    text.append("[Try this challenge on Secure Code Warrior](").append(result.getUrl()).append(")");
+
+    return text.toString();
+  }
+
+}
