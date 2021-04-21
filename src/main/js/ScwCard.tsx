@@ -89,7 +89,7 @@ const ScwCard: FC<Props> = ({ result, className }) => {
           </Content>
         </div>
         <footer className="card-footer">
-          <a href={result?.url} className="card-footer-item">
+          <a href={result?.url} className="card-footer-item" target="_blank">
             {t("scm-scw-plugin.pullRequest.cardLink")}
           </a>
         </footer>
