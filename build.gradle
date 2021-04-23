@@ -28,11 +28,11 @@ plugins {
 }
 
 dependencies {
-  plugin "sonia.scm.plugins:scm-review-plugin:2.8.1-SNAPSHOT"
+  plugin "sonia.scm.plugins:scm-review-plugin:2.9.0"
 }
 
 scmPlugin {
-  scmVersion = "2.16.1-SNAPSHOT"
+  scmVersion = "2.17.0"
   displayName = "Secure Core Warrior"
   description = "Integrates Secure Code Warrior learning material for related security issues."
   author = "Cloudogu GmbH"
