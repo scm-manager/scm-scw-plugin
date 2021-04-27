@@ -24,5 +24,7 @@
 
 import { binder } from "@scm-manager/ui-extensions";
 import ScwCards from "./ScwCards";
+import ScwLinkRenderer from "./ScwLinkRenderer";
 
 binder.bind("reviewPlugin.pullrequest.bottom", ScwCards);
+binder.bind("markdown-renderer.link.protocol", { protocol: "scw", renderer: ScwLinkRenderer });

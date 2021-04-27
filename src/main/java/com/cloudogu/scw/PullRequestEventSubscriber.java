@@ -115,13 +115,9 @@ public class PullRequestEventSubscriber {
     text.append(result.getDescription()).append("\n\n");
 
     // Add videos
-    if (result.getVideos().size() > 0) {
+    if (!result.getVideos().isEmpty()) {
       // Add embedded video player
-      text.append("<iframe width=\"300\" height=\"169\"\n")
-        .append("src=").append(result.getVideos().get(0).replace(" ", "+")).append(" \n")
-        .append("frameborder=\"0\" \n")
-        .append("allow=\"accelerometer; encrypted-media; gyroscope; picture-in-picture\" \n")
-        .append("allowfullscreen=true></iframe> \n\n");
+      text.append("[Video on ").append(result.getName()).append("](scw:").append(result.getVideos().get(0).replace(" ", "+")).append(") \n\n");
       // Add additional videos as links
       if (result.getVideos().size() > 1) {
         text.append("Check out this additional videos:\n\n");
