@@ -33,7 +33,7 @@ dependencies {
 
 scmPlugin {
   scmVersion = "2.18.0"
-  displayName = "Secure Core Warrior"
+  displayName = "Secure Code Warrior"
   description = "Integrates Secure Code Warrior learning material for related security issues."
   author = "Cloudogu GmbH"
   category = "Information"
