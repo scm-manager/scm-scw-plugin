@@ -37,5 +37,6 @@ scmPlugin {
   description = "Integrates Secure Code Warrior learning material for related security issues."
   author = "Cloudogu GmbH"
   category = "Information"
+  avatarUrl = '/images/scw-logo.svg'
 
 }
