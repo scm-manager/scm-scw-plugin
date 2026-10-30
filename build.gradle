@@ -19,11 +19,11 @@ plugins {
 }
 
 dependencies {
-  plugin "sonia.scm.plugins:scm-review-plugin:3.0.0"
+  plugin "sonia.scm.plugins:scm-review-plugin:4.0.0-SNAPSHOT"
 }
 
 scmPlugin {
-  scmVersion = "3.0.0"
+  scmVersion = "4.0.0-SNAPSHOT"
   displayName = "Secure Code Warrior"
   description = "Integrates Secure Code Warrior learning material for related security issues."
   author = "Cloudogu GmbH"
